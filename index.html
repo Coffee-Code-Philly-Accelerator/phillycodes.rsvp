@@ -24,9 +24,9 @@
         </header>
         <section id="main">
             <div id="hero-container">
-                <img src="/media/hero/IMGP0599.JPG">
-                <img src="/media/hero/DSC00105.JPG">
-                <img src="/media/hero/IMGP0603.JPG">
+                <img src="/media/hero/IMGP0599.JPG" draggable="true" class="draggable">
+                <img src="/media/hero/DSC00105.JPG" draggable="true" class="draggable">
+                <img src="/media/hero/IMGP0603.JPG" draggable="true" class="draggable">
             </div>
             <div id="splash">
                 <h1>Saturdays @ 1pm</h1>
@@ -48,17 +48,16 @@
             </div>
         </section>
         <section id="about" class="pure-g">
-            <!-- <div class="pure-u-1-1" style="height: 200px;"> <&-- info: formatting div --&> </div> -->
             <div class="pure-u-1-3"> <!-- info: formatting div --> </div>
             <div class="pure-u-md-1-3 text-center">
                 <div class="point">
                     <img src="/media/doodle/laptop.svg" draggable="false" height="150px">
-                    <p>Bring your laptop. You'll get the space for a few hours of work. Plus, there's coffee!</p>
+                    <p>Bring your laptop. You'll get the space for a few hours to work. Plus, there's coffee!</p>
                 </div>
                 <p><img src="/media/gizmo/elegant-hr.svg" draggable="false"></p>
                 <div class="point">
                     <img src="/media/doodle/sprout_mole.svg" draggable="false" height="100px">
-                    <p>We encourage you to explore and work on a new interest, and share your ideas it with others.</p>
+                    <p>We encourage you to explore and work on a new interest, and share your ideas with others.</p>
                 </div>
             </div>
             <div class="pure-u-1-3"> <!-- info: formatting div --> </div>
@@ -160,6 +159,98 @@
                 </span>
             </p>
         </section>
+
         <script id="luma-checkout" src="https://embed.lu.ma/checkout-button.js"></script>
+
+        <!-- make hero images draggable! -->
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const draggables = document.querySelectorAll('.draggable');
+                let activeItem = null;
+                let initialX;
+                let initialY;
+                let xOffset = 0;
+                let yOffset = 0;
+
+                // Get the initial rotation for each image and store it
+                draggables.forEach((draggable, index) => {
+                    // Store initial rotations
+                    const rotations = ['-12deg', '0deg', '5deg'];
+                    draggable.dataset.rotation = rotations[index];
+                    
+                    // Set initial transforms
+                    const startX = ['10%', '15%', '20%'][index];
+                    const startY = ['20%', '30%', '40%'][index];
+                    draggable.style.transform = `translate(${startX}, ${startY}) rotate(${rotations[index]})`;
+                    
+                    // Prevent default dragging behavior
+                    draggable.addEventListener('dragstart', (e) => e.preventDefault());
+                });
+
+                function dragStart(e) {
+                    // Prevent any default behaviors
+                    e.preventDefault();
+                    
+                    if (e.target.classList.contains('draggable')) {
+                        activeItem = e.target;
+                        
+                        const rect = activeItem.getBoundingClientRect();
+                        const transform = window.getComputedStyle(activeItem).transform;
+                        const matrix = new DOMMatrix(transform);
+                        
+                        // Get current position accounting for rotation
+                        xOffset = matrix.m41;
+                        yOffset = matrix.m42;
+                        
+                        initialX = (e.type === "touchstart" ? e.touches[0].clientX : e.clientX) - xOffset;
+                        initialY = (e.type === "touchstart" ? e.touches[0].clientY : e.clientY) - yOffset;
+
+                        // Bring active item to front
+                        activeItem.style.zIndex = '1000';
+                        
+                        document.addEventListener('mousemove', drag);
+                        document.addEventListener('touchmove', drag);
+                        document.addEventListener('mouseup', dragEnd);
+                        document.addEventListener('touchend', dragEnd);
+                    }
+                }
+
+                function drag(e) {
+                    if (activeItem) {
+                        e.preventDefault();
+                        
+                        const currentX = (e.type === "touchmove" ? e.touches[0].clientX : e.clientX) - initialX;
+                        const currentY = (e.type === "touchmove" ? e.touches[0].clientY : e.clientY) - initialY;
+                        
+                        xOffset = currentX;
+                        yOffset = currentY;
+
+                        const rotation = activeItem.dataset.rotation || '0deg';
+                        activeItem.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${rotation})`;
+                    }
+                }
+
+                function dragEnd(e) {
+                    if (activeItem) {
+                        // Reset z-index
+                        activeItem.style.zIndex = '';
+                        activeItem = null;
+                        
+                        // Remove event listeners
+                        document.removeEventListener('mousemove', drag);
+                        document.removeEventListener('touchmove', drag);
+                        document.removeEventListener('mouseup', dragEnd);
+                        document.removeEventListener('touchend', dragEnd);
+                    }
+                }
+
+                // Add initial event listeners
+                draggables.forEach(draggable => {
+                    draggable.addEventListener('mousedown', dragStart);
+                    draggable.addEventListener('touchstart', dragStart);
+                });
+            });
+        </script>
     </body>
 </html>

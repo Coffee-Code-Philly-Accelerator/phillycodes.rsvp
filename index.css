@@ -154,7 +154,7 @@ header h1 {
     font-family: 'Gloria Hallelujah', sans-serif;
 
     border: 10px solid transparent; 
-    border-image-source: url('/media/gizmo/box.svg'); 
+    border-image-source: url('media/gizmo/box.svg'); 
     border-image-slice: 30%; /* Adjust based on SVG */
     border-image-width: 70px; /* Border thickness */
     border-image-repeat: stretch; 

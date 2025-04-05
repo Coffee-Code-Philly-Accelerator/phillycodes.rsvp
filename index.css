@@ -19,6 +19,7 @@ header {
 .header-right {
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
 .nav-link {
@@ -35,6 +36,17 @@ header {
 .nav-link:hover {
     background-color: var(--accent);
     color: white;
+}
+
+.donate-link {
+    background-color: #e83b3b;
+    color: white;
+    border-color: #e83b3b;
+}
+
+.donate-link:hover {
+    background-color: #c52e2e;
+    border-color: #c52e2e;
 }
 
 header #logo img {
